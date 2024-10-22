@@ -1,0 +1,16 @@
+[Unit]
+Description=Etherpad-lite, the collaborative editor.
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/pi/etherpad-lite
+Environment=NODE_ENV=production
+ExecStart=pnpm run prod
+Restart=always
+StandardOutput=append:/var/log/etherpad/etherpad.log
+StandardError=append:/var/log/etherpad/etherpad-error.log
+
+[Install]
+WantedBy=multi-user.target
