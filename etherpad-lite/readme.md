@@ -70,23 +70,23 @@ These plugins are what makes it good for CDN use
 ```sh
 cd etherpad-lite
 
-pnpm run plugins install ep_aa_file_menu_toolbar
+pnpm run install-plugins ep_aa_file_menu_toolbar
 
-pnpm run plugins install ep_align
+pnpm run install-plugins ep_align
 
-pnpm run plugins install ep_embedded_hyperlinks2
+pnpm run install-plugins ep_embedded_hyperlinks2
 
-pnpm run plugins install ep_font_family
+pnpm run install-plugins ep_font_family
 
-pnpm run plugins install ep_font_color
+pnpm run install-plugins ep_font_color
 
-pnpm run plugins install ep_font_size
+pnpm run install-plugins ep_font_size
 
-pnpm run plugins install ep_headings2
+pnpm run install-plugins ep_headings2
 
-pnpm run plugins install ep_image_upload
+pnpm run install-plugins ep_image_upload
 
-pnpm run plugins install ep_set_title_on_pad
+pnpm run install-plugins ep_set_title_on_pad
 
-pnpm run plugins install ep_spellcheck
+pnpm run install-plugins ep_spellcheck
 ```
