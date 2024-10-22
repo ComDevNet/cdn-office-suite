@@ -1,0 +1,15 @@
+[Unit]
+Description=EtherCalc Spreadsheet
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/EtherCalc
+Restart=always
+Environment=NODE_ENV=production
+StandardOutput=append:/var/log/ethercalc/ethercalc.log
+StandardError=append:/var/log/ethercalc/ethercalc-error.log
+
+[Install]
+WantedBy=multi-user.target
