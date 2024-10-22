@@ -3,7 +3,7 @@
 Clone the repo then run the following commands
 
 ```sh
-npm install -g pnpm
+sudo npm install -g pnpm
 
 git clone -b master https://github.com/ether/etherpad-lite.git
 
@@ -15,6 +15,8 @@ pnpm run build:etherpad
 
 pnpm run prod
 ```
+
+The application runs on port ```9001```.
 
 Exit the process with ```ctrl + c``` then run the following command to start the service
 
@@ -28,6 +30,14 @@ Also make sure the settings.json is in the project root
 sudo apt-get update
 
 sudo apt-get install abiword
+```
+
+## Setup sqlite database
+
+run the following commands in the root of the project to make the application use sqlite as the database
+
+```sh
+pnpm add sqlite3 -w
 ```
 
 ## Setup to get service running
@@ -77,4 +87,6 @@ pnpm run plugins install ep_headings2
 pnpm run plugins install ep_image_upload
 
 pnpm run plugins install ep_set_title_on_pad
+
+pnpm run plugins install ep_spellcheck
 ```

@@ -204,9 +204,16 @@
    * https://www.npmjs.com/package/ueberdb2
    */
 
-  "dbType": "dirty",
+  // "dbType": "dirty",
+  // "dbSettings": {
+  //   "filename": "var/dirty.db"
+  // },
+
+  /* SQLite db */
+  "dbType": "sqlite",
   "dbSettings": {
-    "filename": "var/dirty.db"
+    "filename": "var/sqlite.db",
+    "storage": "var/sqlite.db"
   },
 
   /*
