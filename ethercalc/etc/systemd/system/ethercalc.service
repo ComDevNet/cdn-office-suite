@@ -5,7 +5,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/local/bin/EtherCalc
+ExecStart=/usr/local/bin/ethercalc
 Restart=always
 Environment=NODE_ENV=production
 StandardOutput=append:/var/log/ethercalc/ethercalc.log
