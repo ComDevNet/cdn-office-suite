@@ -21,3 +21,15 @@ Then run the install script.
 ```sh
 ./install.sh
 ```
+
+After installation, you can access the services on the following ports:
+
+- Etherpad Lite: 9001
+
+- Ethercalc: 8000
+
+- Citadel: 2000
+
+The services are designed to run on the same server and can be accessed on the same domain.
+
+For easier access to the services, upload the [module](/cdn_office_suite/). This will allow you to easily access the services.
