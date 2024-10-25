@@ -36,7 +36,7 @@ function display_menu {
   echo "1. Install Full CDN Office Suite"
   echo "2. Install CDN Word"
   echo "3. Install CDN Spreadsheet"
-  echo "4. Install CDN PowerPoint"
+  echo "4. Install CDN Email"
   echo "5. Exit"
 }
 
@@ -45,7 +45,7 @@ function install_full_suite {
   echo "Installing Full CDN Office Suite..."
   install_word
   install_spreadsheet
-  install_powerpoint
+  install_email
 }
 
 # Function to install Word tool
@@ -63,12 +63,12 @@ function install_spreadsheet {
   echo "CDN Spreadsheet installed successfully!"
 }
 
-# Function to install PowerPoint tool
-function install_powerpoint {
-  echo "Installing CDN PowerPoint..."
+# Function to install email tool
+function install_email {
+  echo "Installing CDN email..."
   # Simulate the installation process
   sleep 2
-  echo "CDN PowerPoint installed successfully!"
+  echo "CDN email installed successfully!"
 }
 
 # Main script logic
@@ -91,7 +91,7 @@ while true; do
       install_spreadsheet
       ;;
     4)
-      install_powerpoint
+      install_email
       ;;
     5)
       echo "Exiting CDN Office Suite installer. Goodbye!"
