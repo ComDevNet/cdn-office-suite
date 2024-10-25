@@ -12,7 +12,7 @@ function install_dependencies {
     sudo apt-get install -y toilet
   fi
   echo "Required packages installed successfully!"
-  echo
+  echo 
   echo "Making all the scripts executable..."
   chmod +x etherpad-lite/word_install.sh
   chmod +x ethercalc/spreadsheet_install.sh
@@ -33,7 +33,7 @@ function display_menu {
   echo "This script installs the CDN Office Suite. Choose to install all tools or select individual ones."
   tput sgr0  # Reset color
 
-  echo
+  echo 
   echo "1. Install Full CDN Office Suite"
   echo "2. Install CDN Word"
   echo "3. Install CDN Spreadsheet"
@@ -55,7 +55,7 @@ function install_word {
   echo "Installing CDN Word..."
   ./etherpad-lite/word_install.sh
   echo "CDN Word installed successfully!"
-  echo
+  echo 
 }
 
 # Function to install Spreadsheet tool
@@ -63,7 +63,7 @@ function install_spreadsheet {
   echo "Installing CDN Spreadsheet..."
   ./ethercalc/spreadsheet_install.sh
   echo "CDN Spreadsheet installed successfully!"
-  echo
+  echo 
 }
 
 # Function to install email tool
@@ -71,14 +71,18 @@ function install_email {
   echo "Installing CDN Email..."
   ./citadel/mail_install.sh
   echo "CDN Email installed successfully!"
-  echo
+  echo 
 }
 
 # Function to update the script
 function update_script {
   echo "Updating the script..."
   git fetch origin main
-  git pull origin main
+  Git reset --hard origin/main
+  chmod +x etherpad-lite/word_install.sh
+  chmod +x ethercalc/spreadsheet_install.sh
+  chmod +x citadel/mail_install.sh
+  chmod +x install.sh
   echo "Script updated successfully!"
 }
 
