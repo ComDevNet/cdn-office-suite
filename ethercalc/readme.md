@@ -1,4 +1,8 @@
-# Setup to get service running
+# Ethercalc
+
+Ethercalc is a web-based spreadsheet that allows multiple users to edit a spreadsheet at the same time. It is a self-hosted application that can be used to create and edit spreadsheets.
+
+## Setup to get service running
 
 Run the following commands
 
@@ -17,6 +21,8 @@ sudo npm i -g ethercalc
 ```sh
 ethercalc
 ```
+
+The application runs on port ```8000```.
 
 Copy the [service file](/ethercalc/etc/systemd/system/ethercalc.service) to ```/etc/systemd/system/``` then run the following commands
 
