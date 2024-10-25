@@ -77,7 +77,7 @@ function install_email {
 # Function to update the script
 function update_script {
   echo "Updating the script..."
-  git fetch origin main
+  git fetch --all
   Git reset --hard origin/main
   chmod +x etherpad-lite/word_install.sh
   chmod +x ethercalc/spreadsheet_install.sh

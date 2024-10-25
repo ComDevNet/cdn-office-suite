@@ -13,9 +13,9 @@ cd ~
 # Step 1: Create logging directory and files
 echo
 echo "Setting up logging for EtherCalc..."
-sudo mkdir -p /var/ethercalc/
-sudo touch /var/ethercalc/ethercalc.log
-sudo touch /var/ethercalc/ethercalc-error.log
+sudo mkdir -p /var/log/ethercalc/
+sudo touch /var/log/ethercalc/ethercalc.log
+sudo touch /var/log/ethercalc/ethercalc-error.log
 
 # Step 2: Install EtherCalc globally
 echo
