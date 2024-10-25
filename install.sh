@@ -55,6 +55,7 @@ function install_word {
   echo "Installing CDN Word..."
   ./etherpad-lite/word_install.sh
   echo "CDN Word installed successfully!"
+  echo
 }
 
 # Function to install Spreadsheet tool
@@ -62,6 +63,7 @@ function install_spreadsheet {
   echo "Installing CDN Spreadsheet..."
   ./ethercalc/spreadsheet_install.sh
   echo "CDN Spreadsheet installed successfully!"
+  echo
 }
 
 # Function to install email tool
@@ -69,6 +71,7 @@ function install_email {
   echo "Installing CDN Email..."
   ./citadel/mail_install.sh
   echo "CDN Email installed successfully!"
+  echo
 }
 
 # Function to update the script
