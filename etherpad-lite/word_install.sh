@@ -43,9 +43,9 @@ pnpm add sqlite3 -w
 # Step 7: Set up logging directory and files
 echo
 echo "Setting up logging for Etherpad..."
-sudo mkdir -p /var/etherpad/
-sudo touch /var/etherpad/etherpad.log
-sudo touch /var/etherpad/etherpad-error.log
+sudo mkdir -p /var/log/etherpad/
+sudo touch /var/log/etherpad/etherpad.log
+sudo touch /var/log/etherpad/etherpad-error.log
 
 # Step 8: Configure Etherpad as a system service
 echo
