@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const code=fs.readFileSync('cdn_office_suite/connection.js','utf8');
-function connection(config,origin='http://server:4444'){const ctx={window:{OFFICE_CONFIG:config},location:{origin},URL,Number,Set,Object};vm.createContext(ctx);vm.runInContext(code,ctx);return ctx.window.OFFICE_CONNECTION;}
+function connection(config,origin='http://server:4444'){const ctx={window:{OFFICE_CONFIG:config},location:{origin,hostname:new URL(origin).hostname},URL,Number,Set,Object};vm.createContext(ctx);vm.runInContext(code,ctx);return ctx.window.OFFICE_CONNECTION;}
 const ports={port:8877,oc4dPort:3333,mailPort:2222};
 const c=connection(ports);assert.equal(c.service,'http://server:8877/');assert.equal(c.mail,'http://server:2222/');ports.port=4444;assert.equal(c.ports.port,8877);assert(Object.isFrozen(c.ports));
 for(const config of [undefined,{}, {port:8877,oc4dPort:3333}, {port:'8877',oc4dPort:3333,mailPort:2222},{port:8877,oc4dPort:8877,mailPort:2222}]){const c=connection(config);assert(c.error);assert.equal(c.service,undefined);assert.equal(c.mail,undefined);}
@@ -18,3 +18,17 @@ for(const page of ['index','updates']){
  else assert.equal(node('accessMessage').textContent,'Invalid saved ports');
 }
 console.log('Actual launcher and Updates scripts issue no requests with invalid port settings.');
+
+const suffix='.52.47.49.176.nip.io';
+for(const origin of ['http://192x168x191x243-3000'+suffix,'https://192x168x191x243-3000'+suffix,'http://192x168x191x243'+suffix]){
+ const c=connection({port:8769,oc4dPort:3000,mailPort:2000},origin);
+ assert.equal(c.gateway,true);
+ assert.equal(new URL(c.service).hostname,'192x168x191x243-8769'+suffix);
+ assert.equal(new URL(c.mail).hostname,'192x168x191x243-2000'+suffix);
+ assert.equal(new URL(c.service).port,'');
+ assert.equal(new URL(c.service).protocol,new URL(origin).protocol);
+}
+const customGateway=connection({port:8877,oc4dPort:3333,mailPort:2222},'https://192x168x191x243-3333'+suffix+':8443');
+assert.equal(customGateway.service,'https://192x168x191x243-8877'+suffix+':8443/');
+assert.equal(customGateway.mail,'https://192x168x191x243-2222'+suffix+':8443/');
+console.log('Gateway links retain the public origin port and encode the private app/mail port in the hostname.');

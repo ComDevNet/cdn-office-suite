@@ -27,7 +27,7 @@ for app, release in manifest.items():
     files += ['deckcraft/bundled/' + release['name'], 'deckcraft/bundled/' + app + '-SHA256SUMS.txt']
 for name in ['cdn-logo-transparent.webp', 'untitled-3.webp', *[app+'-icon.png' for app in manifest]]:
     files.append('cdn_office_suite/assets/images/' + name)
-output = root / 'dist/cdn-office-suite-installer-v0.9.0.tar.gz'
+output = root / 'dist/cdn-office-suite-installer-v0.10.0.tar.gz'
 output.parent.mkdir(exist_ok=True)
 with output.open('wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', mtime=0) as compressed, tarfile.open(fileobj=compressed, mode='w') as archive:
     for name in files:

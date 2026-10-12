@@ -39,7 +39,7 @@ for (const [slot, app] of Object.entries(apps)) for (const id of [slot+'Link',sl
 function label(slot, ready, updating=false) { $(slot+'Status').textContent = updating?'Updating':ready?'Ready to go':'Unavailable'; $(slot+'Status').dataset.state = ready&&!updating?'up':'down'; }
 async function status() {
   try {
-    const response = await fetch(new URL('api/status',service),{cache:'no-store',signal:AbortSignal.timeout(5000)});
+    const response = await fetch(new URL('api/status',service),{credentials:connection.gateway?'include':'same-origin',cache:'no-store',signal:AbortSignal.timeout(5000)});
     if (!response.ok) throw new Error(); const data = await response.json(); states = data.apps || {};
     for (const [slot, app] of Object.entries(apps)) { const busy = states[app]?.phase==='installing'; label(slot,Boolean(states[app]?.installed),busy); for(const id of [slot+'Link',slot+'NavLink']) $(id).setAttribute('aria-disabled',String(busy)); }
     label('mail',data.tools.mail);
@@ -47,7 +47,7 @@ async function status() {
 }
 async function access() {
   $('updatesLink').hidden=true;
-  try { const token=localStorage.getItem('accessToken'); if(!token)return; const r=await fetch(new URL('api/access',service),{headers:{Authorization:'Bearer '+token},cache:'no-store',signal:AbortSignal.timeout(7000)}); if(r.ok)$('updatesLink').hidden=!(await r.json()).superadmin; } catch(_){}
+  try { const token=localStorage.getItem('accessToken'); if(!token)return; const r=await fetch(new URL('api/access',service),{credentials:connection.gateway?'include':'same-origin',headers:{Authorization:'Bearer '+token},cache:'no-store',signal:AbortSignal.timeout(7000)}); if(r.ok)$('updatesLink').hidden=!(await r.json()).superadmin; } catch(_){}
 }
 window.addEventListener('storage',event=>{if(event.key==='accessToken')access();});
 status(); access(); setInterval(status,10000);

@@ -36,11 +36,11 @@ The installer targets existing OC4D appliances. It does not install OC4D itself,
 
 ## Install or upgrade another server
 
-Use the portable archive in `dist/`. The current installer revision is **v0.9.0**; this is separate from each app's own version.
+Use the portable archive in `dist/`. The current installer revision is **v0.10.0**; this is separate from each app's own version.
 
 ```sh
-sha256sum -c cdn-office-suite-installer-v0.9.0.tar.gz.sha256
-tar -xzf cdn-office-suite-installer-v0.9.0.tar.gz
+sha256sum -c cdn-office-suite-installer-v0.10.0.tar.gz.sha256
+tar -xzf cdn-office-suite-installer-v0.10.0.tar.gz
 cd cdn-office-suite-installer
 sudo bash install.sh --dry-run
 sudo bash install.sh
@@ -133,3 +133,10 @@ The release checksums, archive safety, authentication, maintenance, rollback, sh
 ## Upstream and licenses
 
 [Wordcraft](https://github.com/storytold/wordcraft), [Gridcraft](https://github.com/storytold/gridcraft), [Deckcraft](https://github.com/storytold/deckcraft), [PDFcraft](https://github.com/storytold/pdfcraft), [Vectorcraft](https://github.com/storytold/vectorcraft), [CADcraft](https://github.com/storytold/cadcraft), [Photocraft](https://github.com/storytold/photocraft). Official icon sources, bundled versions and checksums are recorded in `deckcraft/bundled/releases.json`. See `THIRD_PARTY.md` for attribution and license files.
+
+
+## Remote access through OC4D Gateway
+
+For gateway hostnames such as `192x168x191x243-3000.52.47.49.176.nip.io`, the launcher encodes each configured backend port in the hostname: Craft uses `192x168x191x243-8769.52.47.49.176.nip.io`, and existing mail uses `192x168x191x243-2000.52.47.49.176.nip.io`. The gateway's public scheme and listening port are retained. Direct LAN addresses still use ordinary explicit port numbers. API requests include gateway cookies when this hostname format is detected.
+
+The gateway must run the matching `gateway-proxy.js` Origin/CORS translation fix from the oc4d-gateway repository. Without it, browser module/WASM requests send a public nip.io Origin while the backend sees a private Host, producing 403. The correction belongs in the gateway; do not disable the office host checks or superadmin authorization. A gateway login may be needed once for the Craft `-8769` hostname before cross-host launcher/admin requests work, since gateway session cookies remain hostname-scoped. OC4D superadmin login is separately required for updates. Restart the gateway after deploying its code and refresh the launcher after updating the Office Suite.
