@@ -1,0 +1,5 @@
+__pycache__/
+deckcraft-data/
+deckcraft/bundled/*.zip
+deckcraft/bundled/*-SHA256SUMS.txt
+dist/

@@ -1,0 +1,25 @@
+[Unit]
+Description=CDN Office Suite shared host and updater
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/cdn-office-suite/deckcraft
+EnvironmentFile=/home/pi/cdn-office-suite/deckcraft-data/service.env
+EnvironmentFile=/home/pi/cdn-office-suite/deckcraft-data/oc4d-auth.env
+ExecStart=/usr/bin/python3 -u server.py --root /home/pi/cdn-office-suite/deckcraft-data --port ${OFFICE_PORT} --mail-port ${OFFICE_MAIL_PORT} --hosts ${OFFICE_ALLOWED_HOSTS}
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/pi/cdn-office-suite/deckcraft-data
+MemoryMax=192M
+CPUQuota=50%
+TasksMax=40
+
+[Install]
+WantedBy=multi-user.target

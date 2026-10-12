@@ -1,0 +1,79 @@
+{
+  "deckcraft": {
+    "version": "v0.5.0",
+    "name": "deckcraft-web-0.5.0.zip",
+    "size": 12419325,
+    "archive": "https://github.com/storytold/deckcraft/releases/download/v0.5.0/deckcraft-web-0.5.0.zip",
+    "checksum": "https://github.com/storytold/deckcraft/releases/download/v0.5.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/deckcraft/releases/tag/v0.5.0",
+    "sha256": "49d6aa4871dbfe4e2dd4ebc367db8fbfe6df6db6ba49872e10058e13175c5f51",
+    "icon_source": "https://raw.githubusercontent.com/storytold/deckcraft/v0.5.0/assets/app-icon/deckcraft-1024.png",
+    "icon_sha256": "457cb046a1a4f2e13f06cf7e2e071cb48f6011633ed629b99ff348be4ca91ce0"
+  },
+  "wordcraft": {
+    "version": "v0.5.0",
+    "name": "wordcraft-web-0.5.0.zip",
+    "size": 15279373,
+    "archive": "https://github.com/storytold/wordcraft/releases/download/v0.5.0/wordcraft-web-0.5.0.zip",
+    "checksum": "https://github.com/storytold/wordcraft/releases/download/v0.5.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/wordcraft/releases/tag/v0.5.0",
+    "sha256": "196d0070fec6572238298e211ac4a3ea0510b7a0ac8d6096a5ee59f2ff69f85d",
+    "icon_source": "https://raw.githubusercontent.com/storytold/wordcraft/v0.5.0/assets/app-icon/wordcraft-1024.png",
+    "icon_sha256": "9525114a2a5e7fc84584b0438a2011ca33f4a30884e40561a1715fbbe7b0c647"
+  },
+  "gridcraft": {
+    "version": "v0.5.0",
+    "name": "gridcraft-web-0.5.0.zip",
+    "size": 6255103,
+    "archive": "https://github.com/storytold/gridcraft/releases/download/v0.5.0/gridcraft-web-0.5.0.zip",
+    "checksum": "https://github.com/storytold/gridcraft/releases/download/v0.5.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/gridcraft/releases/tag/v0.5.0",
+    "sha256": "fbd9dbc48694676812c7bbca7f5f2e776cbc52c37d8f425a2dc033b5d23ce606",
+    "icon_source": "https://raw.githubusercontent.com/storytold/gridcraft/v0.5.0/assets/app-icon/gridcraft-1024.png",
+    "icon_sha256": "4a0be45716f47412b5855045bb894fdc43b11e9f25041ebcb5ae4be8182abe44"
+  },
+  "pdfcraft": {
+    "version": "v0.6.0",
+    "name": "pdfcraft-web-0.6.0.zip",
+    "size": 16571597,
+    "archive": "https://github.com/storytold/pdfcraft/releases/download/v0.6.0/pdfcraft-web-0.6.0.zip",
+    "checksum": "https://github.com/storytold/pdfcraft/releases/download/v0.6.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/pdfcraft/releases/tag/v0.6.0",
+    "sha256": "a957a75e35390fa8747ae97464b7a9f178cce61edda22b3b98764462060d15a5",
+    "icon_source": "https://raw.githubusercontent.com/storytold/pdfcraft/v0.6.0/assets/app-icon/pdfcraft-1024.png",
+    "icon_sha256": "da577d3f21fbcf5c739067787a9e683be2b064d76813b5d5fec9074a7a106538"
+  },
+  "vectorcraft": {
+    "version": "v0.9.0",
+    "name": "vectorcraft-web-0.9.0.zip",
+    "size": 21406580,
+    "archive": "https://github.com/storytold/vectorcraft/releases/download/v0.9.0/vectorcraft-web-0.9.0.zip",
+    "checksum": "https://github.com/storytold/vectorcraft/releases/download/v0.9.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/vectorcraft/releases/tag/v0.9.0",
+    "sha256": "4ebe8829a22fa17975c96765dfe9812bd2834e3e721381b4b14abb802c4d7dc1",
+    "icon_source": "https://raw.githubusercontent.com/storytold/vectorcraft/v0.9.0/assets/app-icon/vectorcraft-1024.png",
+    "icon_sha256": "cdf82551078c1c318edf84ae835417f5fe78f4ad785ad01d96d2ff1e66e34a7a"
+  },
+  "cadcraft": {
+    "version": "v0.5.0",
+    "name": "cadcraft-web-0.5.0.zip",
+    "size": 5728303,
+    "archive": "https://github.com/storytold/cadcraft/releases/download/v0.5.0/cadcraft-web-0.5.0.zip",
+    "checksum": "https://github.com/storytold/cadcraft/releases/download/v0.5.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/cadcraft/releases/tag/v0.5.0",
+    "sha256": "da9f83bb88281471dc4f4fae5cbf35e80b72e4d4352852ed147fc19debe44e86",
+    "icon_source": "https://raw.githubusercontent.com/storytold/cadcraft/v0.5.0/assets/app-icon/cadcraft-1024.png",
+    "icon_sha256": "47b76c0e717d835c79d9ec751c4e8ce5e984aace11d554873209b4fc230819e4"
+  },
+  "photocraft": {
+    "version": "v0.7.0",
+    "name": "photocraft-web-0.7.0.zip",
+    "size": 11044166,
+    "archive": "https://github.com/storytold/photocraft/releases/download/v0.7.0/photocraft-web-0.7.0.zip",
+    "checksum": "https://github.com/storytold/photocraft/releases/download/v0.7.0/SHA256SUMS.txt",
+    "notes": "https://github.com/storytold/photocraft/releases/tag/v0.7.0",
+    "sha256": "dfcbaac00f81f5d05ccffba36a14b320c1b1c7b23a4135fe54877f527e550eec",
+    "icon_source": "https://raw.githubusercontent.com/storytold/photocraft/v0.7.0/assets/app-icon/photocraft-1024.png",
+    "icon_sha256": "00a39c5ccbcb2b5f144573b1cedb6c387c4416ad06fd1cf2865b0737458ee704"
+  }
+}
