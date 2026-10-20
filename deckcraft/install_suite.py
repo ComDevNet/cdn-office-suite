@@ -94,13 +94,9 @@ def main():
     if any(c in secret for c in '\n\r\0'):
         p.error('Invalid authentication secret')
     bundled = source / 'deckcraft/bundled'
-    manifest = json.loads((bundled / 'releases.json').read_text())
-    if set(manifest) != set(APPS):
-        p.error('Release manifest must include exactly all seven installed Craft applications')
-    online = a.online or not all((bundled / manifest[app]['name']).exists() for app in manifest)
     managers = [Manager(data if app == 'deckcraft' else data / app, app=app) for app in APPS]
     pointers = [(manager, manager.active(), manager.active('previous')) for manager in managers]
-    prepare(data, bundled, online)
+    prepare(data, bundled, True)
     backup = install / 'backups' / datetime.datetime.now().strftime('%Y%m%dT%H%M%S%f')
     backup.mkdir(parents=True)
     runtime = install / 'deckcraft'

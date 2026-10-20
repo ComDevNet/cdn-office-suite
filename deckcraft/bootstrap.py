@@ -18,6 +18,7 @@ def prepare(root, bundled, online=False):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         releases = json.loads((bundled / "releases.json").read_text()) if not online else {}
         stages = []
+        temp_stages = []
         switched = []
         try:
             # Stage all downloads before changing any active pointer.
@@ -35,11 +36,34 @@ def prepare(root, bundled, online=False):
                         raise ValueError(f"{app} has an incomplete existing release; restore it before reinstalling")
                     print(app, installed, "already installed", flush=True)
                     continue
+                for stale in manager.releases.glob(".staging-*"):
+                    if stale.is_dir() and not stale.is_symlink():
+                        shutil.rmtree(stale)
+                verified = manager.releases / (".verified-" + release["version"])
+                if online and verified.is_dir() and (verified / "cdn-release.json").is_file() and (verified / "index.html").is_file() and list(verified.rglob("*.wasm.gz")) and list(verified.rglob("*.js.gz")):
+                    stages.append((manager, release, verified))
+                    print("Prepared", app, release["version"], "(cached)", flush=True)
+                    continue
                 stage = manager.releases / (".staging-" + secrets.token_hex(6))
                 stage.mkdir()
-                stages.append((manager, release, stage))
+                temp_stages.append(stage)
                 print("Preparing", app, release["version"], flush=True)
-                unpack_release(release, stage, None if online else bundled)
+                last_bucket = -1
+                def report(step, _percent, downloaded=None, total=None):
+                    nonlocal last_bucket
+                    if step == "download" and downloaded is not None and total:
+                        bucket = int(downloaded * 5 // total)
+                        if bucket > last_bucket and bucket > 0:
+                            last_bucket = bucket
+                            print(f"  {app}: {min(100, bucket * 20)}% ({downloaded / 1048576:.1f} / {total / 1048576:.1f} MB)", flush=True)
+                unpack_release(release, stage, None if online else bundled, progress=report if online else None)
+                if online:
+                    if verified.exists():
+                        shutil.rmtree(verified)
+                    stage.rename(verified)
+                    stages.append((manager, release, verified))
+                else:
+                    stages.append((manager, release, stage))
             if stages:
                 marker.write_text(json.dumps({"pid": os.getpid(), "start": Path(f"/proc/{os.getpid()}/stat").read_text().split()[21]}))
                 time.sleep(2)
@@ -66,7 +90,7 @@ def prepare(root, bundled, online=False):
             raise
         finally:
             marker.unlink(missing_ok=True)
-            for _, _, stage in stages:
+            for stage in temp_stages:
                 if stage.exists():
                     shutil.rmtree(stage)
 

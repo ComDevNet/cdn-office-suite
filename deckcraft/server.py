@@ -72,15 +72,47 @@ def fetch(url, limit=MAX_ARCHIVE, progress=None):
     parsed = urlparse(url)
     if parsed.scheme != "https" or parsed.hostname not in {"api.github.com", "github.com"}:
         raise ValueError("Unexpected release source")
-    with urlopen(Request(url, headers={"User-Agent": "CDN-Office-Suite", "Accept": "application/vnd.github+json"}), timeout=30) as response:
-        data = bytearray()
-        total = int(response.headers.get("Content-Length", "0"))
-        while chunk := response.read(min(65536, limit + 1 - len(data))):
-            data.extend(chunk)
-            if len(data) > limit:
-                raise ValueError("Release download is too large")
-            if progress:
-                progress(len(data), total)
+    data = bytearray()
+    total = 0
+    failures = 0
+    while True:
+        before = len(data)
+        headers = {"User-Agent": "CDN-Office-Suite", "Accept": "application/vnd.github+json"}
+        if before:
+            headers["Range"] = f"bytes={before}-"
+        try:
+            with urlopen(Request(url, headers=headers), timeout=60) as response:
+                status = getattr(response, "status", 200)
+                if before and status != 206:
+                    data.clear()
+                    total = 0
+                if not total:
+                    length = int(response.headers.get("Content-Length", "0")) if hasattr(response, "headers") else 0
+                    total = (len(data) + length) if length else 0
+                reader = getattr(response, "read1", None) or response.read
+                while chunk := reader(min(16384, limit + 1 - len(data))):
+                    data.extend(chunk)
+                    if len(data) > limit:
+                        raise ValueError("Release download is too large")
+                    if progress:
+                        progress(len(data), total)
+            if total and len(data) < total:
+                raise IncompleteRead(bytes(data), total - len(data))
+            break
+        except Exception as error:
+            if isinstance(error, HTTPError) and error.code == 416 and before:
+                data.clear()
+                total = 0
+                continue
+            if not Manager.transient(error):
+                raise
+            if len(data) > before:
+                failures = 0
+            else:
+                failures += 1
+                if failures >= 6:
+                    raise
+            time.sleep(min(10, 2 ** max(0, failures - 1)))
     if len(data) > limit:
         raise ValueError("Release download is too large")
     return bytes(data)

@@ -87,6 +87,30 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Incomplete"):
             self.unpack(self.root, release, data[:-1], sums)
 
+    def test_fetch_resumes_partial_download_after_timeout(self):
+        payload = b"abcdefghijklmnopqrstuvwxyz0123456789"
+        calls = []
+        class PartialResponse:
+            def __init__(self, chunk, status, total_len):
+                self.stream = io.BytesIO(chunk)
+                self.status = status
+                self.headers = {"Content-Length": str(total_len)}
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read1(self, n):
+                if self.status == 200 and self.stream.tell() >= 10:
+                    raise TimeoutError("The read operation timed out")
+                return self.stream.read(min(n, 10))
+        def fake_urlopen(req, timeout=0):
+            calls.append(req.get_header("Range"))
+            if req.get_header("Range") == "bytes=10-":
+                return PartialResponse(payload[10:], 206, len(payload) - 10)
+            return PartialResponse(payload, 200, len(payload))
+        with patch.object(server, "urlopen", side_effect=fake_urlopen), patch.object(server.time, "sleep"):
+            result = server.fetch("https://github.com/storytold/deckcraft/releases/download/v0.8.0/deckcraft-web-0.8.0.zip")
+        self.assertEqual(result, payload)
+        self.assertEqual(calls, [None, "bytes=10-"])
+
     def test_atomic_update_and_rollback(self):
         manager = self.existing()
         release, data, sums = bundle()
