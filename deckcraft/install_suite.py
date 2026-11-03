@@ -121,6 +121,11 @@ def main():
             shutil.copy2(source / 'cdn_office_suite/assets/images' / (app + '-icon.png'), runtime / 'icons' / (app + '-icon.png'))
         if (source / 'cdn_office_suite').resolve() != module.resolve():
             shutil.copytree(source / 'cdn_office_suite', module, dirs_exist_ok=True)
+        for manager in managers:
+            active = manager.active()
+            if active and (active / '.cdn-icon.png').is_file():
+                for folder in (runtime / 'icons', module / 'assets/images'):
+                    shutil.copy2(active / '.cdn-icon.png', folder / (manager.app + '-icon.png'))
         (module / 'settings.js').write_text('window.OFFICE_CONFIG=' + json.dumps(ports) + ';\n')
         (data / 'installation.json').write_text(json.dumps({**ports, 'apps': list(APPS)}, indent=2) + '\n')
         auth.write_text('AUTH_SECRET=' + secret + '\n')

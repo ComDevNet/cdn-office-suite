@@ -32,6 +32,12 @@ const service = new URL(connection.service);
 const apps = {word:'wordcraft', spreadsheet:'gridcraft', presentation:'deckcraft', pdf:'pdfcraft', vector:'vectorcraft', cad:'cadcraft', photo:'photocraft'};
 $('serverName').textContent = 'Your server: ' + location.hostname;
 for (const [slot, app] of Object.entries(apps)) $(slot+'Link').href = new URL(app+'/index.html', service).href;
+for (const [slot, app] of Object.entries(apps)) {
+  const icon = $(slot+'Link').parentElement?.querySelector('.app-picture');
+  if (!icon) continue;
+  icon.onerror = () => { icon.onerror = null; icon.src = 'assets/images/'+app+'-icon.png'; };
+  icon.src = new URL(app+'/favicon.png', service).href;
+}
 $('mailLink').href = connection.mail;
 for (const slot of [...Object.keys(apps),'mail']) $(slot+'NavLink').href = $(slot+'Link').href;
 let states = {};

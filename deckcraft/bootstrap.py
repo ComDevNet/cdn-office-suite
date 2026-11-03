@@ -8,7 +8,7 @@ import secrets
 import shutil
 import time
 
-from server import APPS, Manager, latest_release, unpack_release, version
+from server import APPS, Manager, latest_release, unpack_release, version, refresh_icon
 
 
 def prepare(root, bundled, online=False):
@@ -35,17 +35,22 @@ def prepare(root, bundled, online=False):
                     if not (active / "index.html").is_file() or not list(active.rglob("*.wasm")) or not list(active.rglob("*.js")):
                         raise ValueError(f"{app} has an incomplete existing release; restore it before reinstalling")
                     print(app, installed, "already installed", flush=True)
+                    if online:
+                        refresh_icon(active, app)
                     continue
                 for stale in manager.releases.glob(".staging-*"):
                     if stale.is_dir() and not stale.is_symlink():
                         shutil.rmtree(stale)
                 verified = manager.releases / (".verified-" + release["version"])
                 if online and verified.is_dir() and (verified / "cdn-release.json").is_file() and (verified / "index.html").is_file() and list(verified.rglob("*.wasm.gz")) and list(verified.rglob("*.js.gz")):
+                    refresh_icon(verified, app)
                     stages.append((manager, release, verified))
                     print("Prepared", app, release["version"], "(cached)", flush=True)
                     continue
                 stage = manager.releases / (".staging-" + secrets.token_hex(6))
                 stage.mkdir()
+                if active and (active / '.cdn-icon.png').is_file():
+                    shutil.copy2(active / '.cdn-icon.png', stage / '.cdn-icon.png')
                 temp_stages.append(stage)
                 print("Preparing", app, release["version"], flush=True)
                 last_bucket = -1

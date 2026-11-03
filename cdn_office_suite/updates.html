@@ -16,6 +16,7 @@ function message(app,text,error=false){const e=$(app+'-message');if(e){if(e.text
 const stepNames={queued:'In the queue',validate:'Checking your version',download:'Downloading',verify:'Checking the download',unpack:'Unpacking',prepare:'Getting ready',activate:'Installing',waiting:'Download paused',done:'All done!',error:'Update stopped',installer:'Installer at work'};
 function render(app,data){
  const old=states[app];if(old?.jobId&&active(old)&&!data.jobId)return;if(old?.jobId===data.jobId&&old?.updatedAt>data.updatedAt)return;
+ const icon=$(app+'-icon');if(icon){const url=new URL(app+'/favicon.png',service);url.searchParams.set('v',data.installed||'current');if(icon.src!==url.href){icon.onerror=()=>{icon.onerror=null;icon.src='assets/images/'+app+'-icon.png';};icon.src=url.href;}}
  states[app]=data;$(app+'-installed').textContent=data.installed||'Not installed';$(app+'-latest').textContent=data.latest?' · Latest '+data.latest:'';
  const busy=active(data);$(app+'-review').hidden=!data.available||busy;$(app+'-rollback').hidden=!data.previous||data.previous===data.installed||busy;$(app+'-notes').hidden=!data.notes;if(data.notes)$(app+'-notes').href=data.notes;
  if(busy||data.phase==='error'||data.phase==='complete')message(app,data.message,data.phase==='error');else if(data.latest)message(app,data.available?'A new version is ready to review.':'All caught up. You have the latest release.');else message(app,'Checking will not install anything.');

@@ -36,11 +36,11 @@ The installer targets existing OC4D appliances. It does not install OC4D itself,
 
 ## Install or upgrade another server
 
-Use the portable archive in `dist/`. The current installer revision is **v0.10.0**; this is separate from each app's own version.
+Use the portable archive in `dist/`. The current installer revision is **v0.11.0**; this is separate from each app's own version.
 
 ```sh
-sha256sum -c cdn-office-suite-installer-v0.10.0.tar.gz.sha256
-tar -xzf cdn-office-suite-installer-v0.10.0.tar.gz
+sha256sum -c cdn-office-suite-installer-v0.11.0.tar.gz.sha256
+tar -xzf cdn-office-suite-installer-v0.11.0.tar.gz
 cd cdn-office-suite-installer
 sudo bash install.sh --dry-run
 sudo bash install.sh
@@ -140,3 +140,11 @@ The release checksums, archive safety, authentication, maintenance, rollback, sh
 For gateway hostnames such as `192x168x191x243-3000.52.47.49.176.nip.io`, the launcher encodes each configured backend port in the hostname: Craft uses `192x168x191x243-8769.52.47.49.176.nip.io`, and existing mail uses `192x168x191x243-2000.52.47.49.176.nip.io`. The gateway's public scheme and listening port are retained. Direct LAN addresses still use ordinary explicit port numbers. API requests include gateway cookies when this hostname format is detected.
 
 The gateway must run the matching `gateway-proxy.js` Origin/CORS translation fix from the oc4d-gateway repository. Without it, browser module/WASM requests send a public nip.io Origin while the backend sees a private Host, producing 403. The correction belongs in the gateway; do not disable the office host checks or superadmin authorization. A gateway login may be needed once for the Craft `-8769` hostname before cross-host launcher/admin requests work, since gateway session cookies remain hostname-scoped. OC4D superadmin login is separately required for updates. Restart the gateway after deploying its code and refresh the launcher after updating the Office Suite.
+
+## Official icons and split web builds
+
+Online app installation and updates fetch each icon from the official `storytold/APP` repository at `assets/app-icon/APP-1024.png` on its default branch. Icons are checked for PNG format, bounded size and dimensions, then stored atomically beside the release. Online installer reruns refresh icons even when an app version is already installed. The launcher and browser tab use the same local `/APP/favicon.png` endpoint, which revalidates rather than caching forever.
+
+If the repository cannot be reached or returns an invalid icon, installation keeps the existing or bundled icon and logs a warning. Offline installs use bundled artwork; a later online installation or app update refreshes it. The server never needs internet just to display an installed icon.
+
+Some newer split web releases load JavaScript from `app/` while storing imported snippets at the release root. The host resolves missing `app/snippets/` files against that release's `snippets/` directory. Existing files take precedence, and path traversal protections still apply.

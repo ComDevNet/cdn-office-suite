@@ -8,7 +8,7 @@ const html=fs.readFileSync('cdn_office_suite/updates.html','utf8');const script=
 (async()=>{
 const base={installed:'v0.5.0',latest:'v0.6.0',available:true,notes:null,previous:null,jobId:'approved-job',version:'v0.6.0'};
 response={apps:{deckcraft:{...base,phase:'installing',step:'download',progress:40,downloadedBytes:400,totalBytes:1000,attempt:1,updatedAt:10,message:'Downloading'}}};
-await vm.runInContext('refresh()',sandbox);assert.equal(el('deckcraft-progress').value,40);assert.equal(el('deckcraft-job').hidden,false);
+await vm.runInContext('refresh()',sandbox);assert.equal(el('deckcraft-icon').src,'http://192.168.191.89:8769/deckcraft/favicon.png?v=v0.5.0');assert.equal(el('deckcraft-progress').value,40);assert.equal(el('deckcraft-job').hidden,false);
 offline=true;await vm.runInContext('refresh()',sandbox);assert.equal(el('connectionStatus').hidden,false);assert.equal(el('deckcraft-progress').value,40);assert(controls.every(b=>b.disabled));
 offline=false;response={apps:{deckcraft:{...base,phase:'retrying',step:'waiting',progress:40,attempt:2,updatedAt:11,nextRetryAt:Date.now()/1000+60,message:'Waiting for internet'}}};
 await vm.runInContext('refresh()',sandbox);assert.equal(el('connectionStatus').hidden,true);assert.equal(el('deckcraft-step').textContent,'Download paused');assert.match(el('deckcraft-detail').textContent,/Attempt 2/);assert(controls.every(b=>b.disabled));

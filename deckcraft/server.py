@@ -1,5 +1,6 @@
 """Static Deckcraft hosting and an approval-gated release updater. Standard library only."""
 import argparse
+import base64
 import gzip
 import hashlib
 import hmac
@@ -125,6 +126,30 @@ def version(value):
     return tuple(map(int, match.groups()))
 
 
+def refresh_icon(target, app):
+    """Keep a local icon when offline; only accept PNGs from the official repo."""
+    if app not in APPS:
+        raise ValueError("Unknown office app")
+    temporary = target / '.cdn-icon.tmp'
+    try:
+        metadata = json.loads(fetch(f"https://api.github.com/repos/storytold/{app}/contents/assets/app-icon/{app}-1024.png", 4 * 1024 * 1024))
+        if metadata.get('encoding') != 'base64' or metadata.get('type') != 'file':
+            raise ValueError('Invalid official icon metadata')
+        data = base64.b64decode(metadata['content'].replace('\n', ''), validate=True)
+        if not 24 <= len(data) <= 2 * 1024 * 1024 or data[:8] != b'\x89PNG\r\n\x1a\n' or data[12:16] != b'IHDR':
+            raise ValueError('Invalid official PNG icon')
+        if not all(0 < int.from_bytes(data[start:start + 4], 'big') <= 4096 for start in (16, 20)):
+            raise ValueError('Invalid official icon dimensions')
+        temporary.write_bytes(data)
+        temporary.replace(target / '.cdn-icon.png')
+        return True
+    except Exception as error:
+        logging.warning('Keeping the existing %s icon: %s', app, error)
+        return False
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def latest_release(app="deckcraft", approved_version=None):
     if app not in APPS:
         raise ValueError("Unknown office app")
@@ -180,7 +205,7 @@ def unpack_release(release, target, bundled=None, progress=None):
                 raise ValueError("Unsafe archive entry")
             if not relative or entry.is_dir():
                 continue
-            if relative in seen or relative == "cdn-release.json" or relative.endswith(".gz"):
+            if relative in seen or relative in {"cdn-release.json", ".cdn-icon.png", ".cdn-icon.tmp"} or relative.endswith(".gz"):
                 raise ValueError("Unexpected archive entry")
             seen.add(relative)
             destination = target / relative
@@ -193,6 +218,8 @@ def unpack_release(release, target, bundled=None, progress=None):
     (target / "cdn-release.json").write_text(json.dumps({"version": release["version"], "sha256": digest, "source": release["archive"]}))
     notify("prepare", 92)
     precompress(target)
+    if not bundled:
+        refresh_icon(target, release.get('app', 'deckcraft'))
     notify("prepare", 97)
 
 
@@ -431,12 +458,17 @@ class Manager:
                         destination = self.releases / target["version"]
                         stage = self.releases / (".staging-" + secrets.token_hex(6))
                         stage.mkdir()
+                        current = self.active()
+                        if current and (current / '.cdn-icon.png').is_file():
+                            shutil.copy2(current / '.cdn-icon.png', stage / '.cdn-icon.png')
                         unpack_release(target, stage, progress=self.progress if self.job else None)
                         if destination.exists():
                             existing = json.loads((destination / "cdn-release.json").read_text())
                             downloaded = json.loads((stage / "cdn-release.json").read_text())
                             if existing != downloaded:
                                 raise ValueError("Stored release differs from the verified download")
+                            if (stage / '.cdn-icon.png').is_file():
+                                (stage / '.cdn-icon.png').replace(destination / '.cdn-icon.png')
                             shutil.rmtree(stage)
                         else:
                             stage.rename(destination)
@@ -579,7 +611,10 @@ class Handler(BaseHTTPRequestHandler):
         if not manager or not path.startswith("/" + app + "/"):
             return self.json(404, {"error": "Not found"})
         if path == "/" + app + "/favicon.png":
-            icon = Path(__file__).with_name("icons") / (app + "-icon.png")
+            active = manager.active()
+            icon = active / '.cdn-icon.png' if active else Path('/nonexistent')
+            if not icon.is_file():
+                icon = Path(__file__).with_name("icons") / (app + "-icon.png")
             if not icon.is_file():
                 return self.json(404, {"error": "App icon not installed"})
             data = icon.read_bytes()
@@ -605,6 +640,9 @@ class Handler(BaseHTTPRequestHandler):
         if not active:
             return self.json(503, {"error": "The app is not installed"})
         source = active / relative
+        # Split web builds import snippets beside app/*.js but ship them at the release root.
+        if not source.is_file() and relative.startswith('app/snippets/'):
+            source = active / relative.removeprefix('app/')
         # Keep old hashed assets available to tabs opened before the atomic switch.
         if not source.is_file() and re.fullmatch(app + r"-web-[a-f0-9]+(?:_bg)?\.(?:wasm|js)", relative):
             for release in manager.releases.iterdir():
