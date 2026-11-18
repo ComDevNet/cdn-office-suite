@@ -127,6 +127,9 @@ def main():
                 for folder in (runtime / 'icons', module / 'assets/images'):
                     shutil.copy2(active / '.cdn-icon.png', folder / (manager.app + '-icon.png'))
         (module / 'settings.js').write_text('window.OFFICE_CONFIG=' + json.dumps(ports) + ';\n')
+        # Keep the configured launcher outside OC4D's Git checkout so stack
+        # installs can restore it after git reset replaces tracked public files.
+        shutil.copytree(module, runtime / 'launcher', dirs_exist_ok=True)
         (data / 'installation.json').write_text(json.dumps({**ports, 'apps': list(APPS)}, indent=2) + '\n')
         auth.write_text('AUTH_SECRET=' + secret + '\n')
         env = data / 'service.env'

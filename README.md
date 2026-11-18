@@ -104,6 +104,8 @@ Installed layout under `<install-dir>`:
 
 The launcher is copied to `<website-dir>/public/modules/cdn_office_suite`. Never distribute `deckcraft-data`, configuration backups or legacy document archives: they can contain private data and credentials.
 
+The installer also saves the configured launcher in `<install-dir>/deckcraft/launcher`, outside the OC4D checkout. Use an OC4D stack installer with Office launcher recovery support: it restores this copy before building, including after `git reset --hard origin/main` brings back OC4D's older tracked launcher. Existing installations must rerun this Office installer once to create the recovery copy. Updating the OC4D repository does not update this separate Office Suite repository or its applications.
+
 ## Operation and recovery
 
 ```sh
