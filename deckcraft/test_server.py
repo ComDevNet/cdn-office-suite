@@ -48,6 +48,14 @@ class ReleaseTests(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def test_allowed_hosts_always_include_oc4d_appliance_names(self):
+        hosts = server.allowed_hosts("192.168.1.214,cdn")
+        self.assertIn("192.168.1.214", hosts)
+        self.assertIn("cdn", hosts)
+        self.assertIn("oc4d.cdn", hosts)
+        self.assertIn("cdn.local", hosts)
+        self.assertEqual(server.allowed_hosts("OC4D.CDN"), {"oc4d.cdn", "cdn.local"})
+
     def existing(self):
         manager = server.Manager(self.root, maintenance_grace=0)
         old = manager.releases / "v0.5.0"

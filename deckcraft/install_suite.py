@@ -13,12 +13,30 @@ import time
 from urllib.request import urlopen
 from configuration import saved_ports, resolve_ports
 from bootstrap import prepare
-from server import APPS, Manager
+from server import APPS, APPLIANCE_HOSTS, Manager, allowed_hosts
 from remove_legacy import remove as remove_legacy
 
 
 def run(*args):
     return subprocess.check_output(args, text=True).strip()
+
+
+def saved_hosts(data):
+    env = data / 'service.env'
+    if not env.is_file():
+        return []
+    for line in env.read_text().splitlines():
+        if line.startswith('OFFICE_ALLOWED_HOSTS='):
+            return [part.strip() for part in line.split('=', 1)[1].split(',') if part.strip()]
+    return []
+
+
+def discover_hosts(data):
+    """IPs, machine hostname, prior allow-list, and OC4D local names (oc4d.cdn)."""
+    names = ['localhost', '127.0.0.1', socket.gethostname(), *sorted(APPLIANCE_HOSTS)]
+    names += [ip for ip in run('hostname', '-I').split() if ':' not in ip]
+    names += saved_hosts(data)
+    return ','.join(dict.fromkeys(names))
 
 
 def main():
@@ -48,7 +66,9 @@ def main():
     source = Path(__file__).resolve().parent.parent
     data = install / 'deckcraft-data'
     module = website / 'public/modules/cdn_office_suite'
-    hosts = a.hosts or ','.join(dict.fromkeys(['localhost', '127.0.0.1', socket.gethostname()] + [ip for ip in run('hostname', '-I').split() if ':' not in ip]))
+    hosts = a.hosts or discover_hosts(data)
+    # Explicit --hosts still gets OC4D appliance names so oc4d.cdn keeps working.
+    hosts = ','.join(sorted(allowed_hosts(hosts)))
     if not (website / 'public').is_dir():
         p.error('Use --website-dir to specify the OC4D website directory')
     if str(install) in ('/', '/home', '/usr', '/etc') or any(c.isspace() for c in str(install)):

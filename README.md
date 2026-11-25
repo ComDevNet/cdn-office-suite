@@ -30,7 +30,7 @@ Rerunning the installer skips bundled application versions that are already inst
 - Python 3.10 or newer and `ss` from iproute2. Missing packages need apt/internet on supported Debian-based systems.
 - At least 1 GB free disk space; more is needed for repeated releases and backups.
 - Distinct office, OC4D and mail ports. Defaults: 8769, 3000 and 2000.
-- The office port must be reachable from user devices, and every server IP/hostname used by visitors must appear in `--hosts`.
+- The office port must be reachable from user devices, and every server IP/hostname used by visitors must appear in `--hosts`. The installer always includes OC4D's local names `oc4d.cdn` and `cdn.local`, plus localhost, the machine hostname, current IPv4 addresses, and any previously saved allow-list.
 
 The installer targets existing OC4D appliances. It does not install OC4D itself, configure HTTPS/firewalls, provide a public internet deployment or guarantee compatibility with arbitrary Linux distributions and authentication systems. HTTPS OC4D needs a matching HTTPS proxy for the office host to avoid mixed-content blocking.
 
@@ -52,7 +52,7 @@ The archive includes seven checksum-verified web releases and official icons. Ap
 sudo bash install.sh --oc4d-service oc4d.service \
   --website-dir /home/pi/oc4d-server/workspaces/website \
   --install-dir /home/pi/cdn-office-suite \
-  --hosts 192.168.191.89,cdn.local --port 8769 \
+  --hosts 192.168.191.89,oc4d.cdn --port 8769 \
   --oc4d-port 3000 --mail-port 2000
 ```
 
@@ -115,7 +115,7 @@ curl http://127.0.0.1:8769/api/status
 sudo systemctl restart cdn-office-updater.service
 ```
 
-The office host and OC4D are enabled at boot. On restart, the host reloads saved jobs and resumes unfinished work. After a hostname/IP change, rerun with the correct `--hosts`. For maintenance that waits on internet, restore the Pi's network; the worker retries automatically. A failed verification keeps the current release and requires a new check/approval. Previous releases and backups consume disk space; no automatic history pruning is implemented.
+The office host and OC4D are enabled at boot. On restart, the host reloads saved jobs and resumes unfinished work. After a hostname/IP change, rerun with the correct `--hosts` (or omit `--hosts` to rediscover IPs while keeping `oc4d.cdn`). For maintenance that waits on internet, restore the Pi's network; the worker retries automatically. A failed verification keeps the current release and requires a new check/approval. Previous releases and backups consume disk space; no automatic history pruning is implemented.
 
 ## Resource use and validation
 

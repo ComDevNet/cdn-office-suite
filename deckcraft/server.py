@@ -63,10 +63,17 @@ def superadmin(authorization):
 
 API = "https://api.github.com/repos/storytold/deckcraft/releases/latest"
 APPS = ("deckcraft", "wordcraft", "gridcraft", "pdfcraft", "vectorcraft", "cadcraft", "photocraft")
+# Match OC4D's local appliance names (server.js canonicalHost / cdn.local).
+APPLIANCE_HOSTS = frozenset({"oc4d.cdn", "cdn.local"})
 MAX_ARCHIVE = 80 * 1024 * 1024
 MAX_UNPACKED = 240 * 1024 * 1024
 ACTIVE_PHASES = {"queued", "installing", "retrying"}
 MAINTENANCE_PAGE = b'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deckcraft is updating</title><body style="margin:0;background:#edefeb;color:#232323;font:16px/1.5 system-ui;display:grid;place-items:center;min-height:100vh"><main style="max-width:480px;padding:32px;margin:20px;border-radius:24px;background:white"><h1 style="font-size:26px">Deckcraft is updating</h1><p>Presentations are temporarily unavailable. This page will reopen automatically when the update finishes.</p></main><script>async function check(){try{const r=await fetch('/api/maintenance',{cache:'no-store'});if(r.ok&&!(await r.json()).blocked){location.reload();return;}}catch(_){}setTimeout(check,1500);}check();</script></body></html>'''
+
+
+def allowed_hosts(hosts):
+    """Build the Host allow-list from --hosts, always including OC4D local names."""
+    return {part.strip().lower() for part in hosts.split(",") if part.strip()} | set(APPLIANCE_HOSTS)
 
 
 def fetch(url, limit=MAX_ARCHIVE, progress=None):
@@ -775,7 +782,9 @@ def main():
     server.managers = {app: Manager(root if app == "deckcraft" else root / app, app=app, operation_lock=operation_lock, maintenance_file=root / ".installer-maintenance", operation_file=root / "operations.lock") for app in APPS}
     server.mail_port = args.mail_port
     server.manager = server.managers["deckcraft"]
-    server.allowed_hosts = set(args.hosts.lower().split(","))
+    # Always accept OC4D's local appliance names so browsing via oc4d.cdn works
+    # even when --hosts only listed IPs / the machine hostname.
+    server.allowed_hosts = allowed_hosts(args.hosts)
     def recover_jobs():
         # Saved approvals survive browser disconnects and service restarts.
         while True:
